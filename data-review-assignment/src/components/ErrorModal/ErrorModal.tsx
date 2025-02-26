@@ -33,9 +33,9 @@ export default function ErrorModal({
   // Get the appropriate icon based on error severity
   const getErrorIcon = (error: Error) => {
     return error.severity === "critical" ? (
-      <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 text-red-500 flex-shrink-0" />
+      <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 text-red-500 dark:text-dark-error-primary flex-shrink-0" />
     ) : (
-      <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-500 flex-shrink-0" />
+      <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-500 dark:text-dark-warning-primary flex-shrink-0" />
     );
   };
 
@@ -100,7 +100,7 @@ export default function ErrorModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 modal-backdrop theme-transition"
       onClick={(e) => {
         // Close modal when clicking the backdrop
         if (e.target === e.currentTarget) onClose();
@@ -112,13 +112,13 @@ export default function ErrorModal({
     >
       <div
         ref={modalRef}
-        className="bg-white p-6 rounded-xl shadow-xl max-w-md w-full m-4 border border-gray-200"
+        className="bg-white dark:bg-dark-bg-secondary p-6 rounded-xl shadow-xl max-w-md w-full m-4 border border-gray-200 dark:border-dark-border-default modal-content theme-transition"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex justify-between items-center mb-5 border-b border-gray-100 pb-3">
+        <div className="flex justify-between items-center mb-5 border-b border-gray-100 dark:border-dark-border-default pb-3 modal-header theme-transition">
           <h2
             id="error-modal-title"
-            className="text-lg sm:text-xl font-bold text-gray-800"
+            className="text-lg sm:text-xl font-bold text-gray-800 dark:text-dark-text-primary theme-transition"
           >
             Error Summary for {record.name}
           </h2>
@@ -139,29 +139,29 @@ export default function ErrorModal({
               {sortedErrors.map(([fieldName, error]) => (
                 <li
                   key={fieldName}
-                  className={`p-2 sm:p-3 rounded-lg flex items-start ${
+                  className={`p-2 sm:p-3 rounded-lg flex items-start theme-transition ${
                     error.severity === "critical"
-                      ? "bg-red-50 border-l-4 border-red-500"
-                      : "bg-yellow-50 border-l-4 border-yellow-500"
+                      ? "bg-red-50 border-l-4 border-red-500 dark:bg-dark-error-bg dark:border-dark-error-primary error-critical"
+                      : "bg-yellow-50 border-l-4 border-yellow-500 dark:bg-dark-warning-bg dark:border-dark-warning-primary error-warning"
                   }`}
                 >
                   <div className="mr-3 mt-0.5">{getErrorIcon(error)}</div>
                   <div className="flex-1">
                     <div className="flex items-center flex-wrap gap-2">
-                      <h3 className="font-semibold capitalize text-gray-800">
+                      <h3 className="font-semibold capitalize text-gray-800 dark:text-dark-text-primary theme-transition">
                         {fieldName}
                       </h3>
                       <span
-                        className={`text-xs px-2 py-0.5 rounded-full ${
+                        className={`text-xs px-2 py-0.5 rounded-full theme-transition ${
                           error.severity === "critical"
-                            ? "bg-red-100 text-red-800 border border-red-200"
-                            : "bg-yellow-100 text-yellow-800 border border-yellow-200"
+                            ? "bg-red-100 text-red-800 border border-red-200 dark:bg-dark-error-bg dark:text-dark-error-primary dark:border-dark-error-primary/30"
+                            : "bg-yellow-100 text-yellow-800 border border-yellow-200 dark:bg-dark-warning-bg dark:text-dark-warning-primary dark:border-dark-warning-primary/30"
                         }`}
                       >
                         {getSeverityLabel(error.severity)}
                       </span>
                     </div>
-                    <p className="text-sm mt-1 text-gray-700">
+                    <p className="text-sm mt-1 text-gray-700 dark:text-dark-text-secondary theme-transition">
                       {error.message}
                     </p>
                   </div>
@@ -169,7 +169,7 @@ export default function ErrorModal({
               ))}
             </ul>
           ) : (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-gray-500 dark:text-dark-text-secondary theme-transition">
               <p>No errors found for this record.</p>
             </div>
           )}

@@ -26,25 +26,25 @@ export default function TableRow({ record, fields }: TableRowProps) {
     switch (status.toLowerCase()) {
       case "active":
         return (
-          <span className="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 border border-green-200">
+          <span className="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 border border-green-200 badge-active theme-transition">
             Active
           </span>
         );
       case "inactive":
         return (
-          <span className="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800 border border-gray-200">
+          <span className="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800 border border-gray-200 badge-inactive theme-transition">
             Inactive
           </span>
         );
       case "pending":
         return (
-          <span className="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800 border border-blue-200">
+          <span className="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800 border border-blue-200 badge-pending theme-transition">
             Pending
           </span>
         );
       default:
         return (
-          <span className="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800 border border-gray-200">
+          <span className="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800 border border-gray-200 badge-inactive theme-transition">
             {status}
           </span>
         );
@@ -53,7 +53,7 @@ export default function TableRow({ record, fields }: TableRowProps) {
 
   return (
     <>
-      <tr className="hover:bg-indigo-50/30 transition-colors duration-150 ease-in-out">
+      <tr className="hover:bg-indigo-50/30 dark:hover:bg-dark-bg-tertiary/50 theme-transition table-row">
         {fields.map((field) => (
           <TableCell
             key={field.key}
@@ -76,7 +76,7 @@ export default function TableRow({ record, fields }: TableRowProps) {
           >
             View Errors
             {getErrorCount(record) > 0 && (
-              <span className="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-200 text-indigo-800">
+              <span className="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-200 text-indigo-800 dark:bg-dark-accent-primary/30 dark:text-dark-accent-secondary theme-transition">
                 {getErrorCount(record)}
               </span>
             )}

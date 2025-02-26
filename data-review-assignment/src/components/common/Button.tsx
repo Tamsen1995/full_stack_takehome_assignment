@@ -38,7 +38,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     // Base classes that apply to all buttons
     const baseClasses =
-      "inline-flex items-center justify-center font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2";
+      "inline-flex items-center justify-center font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-dark-bg-primary";
 
     // Size specific classes
     const sizeClasses = {
@@ -51,15 +51,16 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     // Variant specific classes
     const variantClasses = {
       primary:
-        "bg-gradient-to-r from-indigo-600 to-blue-600 text-white hover:from-indigo-700 hover:to-blue-700 shadow-md hover:shadow-lg focus:ring-indigo-500",
+        "bg-gradient-to-r from-indigo-600 to-blue-600 text-white hover:from-indigo-700 hover:to-blue-700 shadow-md hover:shadow-lg focus:ring-indigo-500 dark:from-dark-accent-primary dark:to-dark-accent-secondary dark:hover:from-dark-accent-hover dark:hover:to-dark-accent-hover dark:shadow-black/30 dark:focus:ring-dark-accent-primary",
       secondary:
-        "bg-gray-100 text-gray-800 hover:bg-gray-200 focus:ring-gray-500",
-      danger: "bg-red-100 text-red-700 hover:bg-red-200 focus:ring-red-500",
+        "bg-gray-100 text-gray-800 hover:bg-gray-200 focus:ring-gray-500 dark:bg-dark-bg-tertiary dark:text-dark-text-secondary dark:hover:bg-dark-border-default dark:focus:ring-dark-border-focus",
+      danger:
+        "bg-red-100 text-red-700 hover:bg-red-200 focus:ring-red-500 dark:bg-dark-error-bg dark:text-dark-error-primary dark:hover:bg-dark-error-bg/70 dark:focus:ring-dark-error-primary",
       success:
-        "bg-gradient-to-r from-emerald-500 to-green-500 text-white hover:from-emerald-600 hover:to-green-600 shadow-md hover:shadow-lg focus:ring-green-500",
+        "bg-gradient-to-r from-emerald-500 to-green-500 text-white hover:from-emerald-600 hover:to-green-600 shadow-md hover:shadow-lg focus:ring-green-500 dark:from-dark-success-primary dark:to-dark-success-secondary dark:hover:from-dark-success-secondary dark:hover:to-dark-success-secondary dark:shadow-black/30 dark:focus:ring-dark-success-primary",
       ghost:
-        "text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:ring-gray-500",
-      link: "text-indigo-600 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 focus:ring-indigo-500",
+        "text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:ring-gray-500 dark:text-dark-text-secondary dark:hover:text-dark-text-primary dark:hover:bg-dark-bg-tertiary dark:focus:ring-dark-border-focus",
+      link: "text-indigo-600 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 focus:ring-indigo-500 dark:text-dark-accent-secondary dark:hover:text-dark-accent-primary dark:bg-dark-accent-primary/10 dark:hover:bg-dark-accent-primary/20 dark:focus:ring-dark-accent-primary",
     };
 
     // Disabled state classes

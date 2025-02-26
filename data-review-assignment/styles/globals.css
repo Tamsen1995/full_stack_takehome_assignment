@@ -3,6 +3,18 @@
 @tailwind utilities;
 
 :root {
+  /* Default to dark mode variables */
+  --background: #121212;
+  --foreground: #ffffff;
+}
+
+.dark {
+  --background: #121212;
+  --foreground: #ffffff;
+}
+
+/* Light mode class */
+:root:not(.dark) {
   --background: #ffffff;
   --foreground: #171717;
 }
@@ -26,16 +38,78 @@ body {
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
+  @apply bg-gray-100 dark:bg-dark-bg-tertiary rounded-lg;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #c7d2fe;
-  border-radius: 10px;
-  border: 2px solid #f1f1f1;
+  @apply bg-indigo-200 dark:bg-dark-accent-primary rounded-lg border-2 border-gray-100 dark:border-dark-bg-tertiary;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #818cf8;
+  @apply bg-indigo-400 dark:bg-dark-accent-hover;
+}
+
+/* Dark mode transitions */
+.theme-transition {
+  transition-property: color, background-color, border-color,
+    text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+/* Dark mode specific styles */
+.dark .data-table {
+  @apply bg-dark-bg-secondary border-dark-border-default shadow-lg shadow-black/20;
+}
+
+.dark .table-header th {
+  @apply bg-gradient-to-r from-dark-bg-tertiary to-dark-bg-tertiary/80 text-dark-text-primary border-dark-border-default;
+}
+
+.dark .table-row {
+  @apply border-dark-border-default hover:bg-dark-bg-tertiary/50;
+}
+
+.dark .table-cell {
+  @apply text-dark-text-primary border-dark-border-default;
+}
+
+.dark .error-critical {
+  @apply bg-dark-error-bg border-dark-error-primary text-dark-error-primary;
+}
+
+.dark .error-warning {
+  @apply bg-dark-warning-bg border-dark-warning-primary text-dark-warning-primary;
+}
+
+.dark .tooltip {
+  @apply bg-gradient-to-r from-dark-bg-tertiary to-dark-bg-secondary border-dark-border-focus text-dark-text-primary;
+}
+
+.dark .tooltip-arrow {
+  @apply bg-dark-bg-tertiary;
+}
+
+.dark .modal-backdrop {
+  @apply bg-black/80;
+}
+
+.dark .modal-content {
+  @apply bg-dark-bg-secondary border-dark-border-default;
+}
+
+.dark .modal-header {
+  @apply border-dark-border-default text-dark-text-primary;
+}
+
+.dark .badge-active {
+  @apply bg-dark-success-bg text-dark-success-primary border-dark-success-secondary/30;
+}
+
+.dark .badge-inactive {
+  @apply bg-dark-bg-tertiary text-dark-text-secondary border-dark-border-focus;
+}
+
+.dark .badge-pending {
+  @apply bg-dark-accent-primary/20 text-dark-accent-secondary border-dark-accent-primary/30;
 }

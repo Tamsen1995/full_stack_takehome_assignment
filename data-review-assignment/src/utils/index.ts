@@ -16,15 +16,15 @@ export const getError = (record: Record, fieldName: string): Error | null => {
 // Get the appropriate CSS class based on error severity
 export const getErrorClass = (record: Record, fieldName: string): string => {
   const error = getError(record, fieldName);
-  if (!error) return "bg-white border-transparent"; // No error
+  if (!error) return "bg-white dark:bg-dark-bg-secondary border-transparent"; // No error
 
   switch (error.severity) {
     case "critical":
-      return "bg-red-50 text-red-800 border-l-4 border-red-500";
+      return "bg-red-50 text-red-800 border-l-4 border-red-500 dark:bg-dark-error-bg dark:text-dark-error-primary dark:border-dark-error-primary error-critical";
     case "warning":
-      return "bg-yellow-50 text-yellow-800 border-l-4 border-yellow-500";
+      return "bg-yellow-50 text-yellow-800 border-l-4 border-yellow-500 dark:bg-dark-warning-bg dark:text-dark-warning-primary dark:border-dark-warning-primary error-warning";
     default:
-      return "bg-white border-transparent";
+      return "bg-white dark:bg-dark-bg-secondary border-transparent";
   }
 };
 

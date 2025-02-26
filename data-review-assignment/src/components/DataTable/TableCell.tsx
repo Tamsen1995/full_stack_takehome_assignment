@@ -20,19 +20,21 @@ export default function TableCell({
 
   const cellContent = (
     <div className="flex items-center">
-      <span className="flex-grow font-medium text-gray-700">{value}</span>
+      <span className="flex-grow font-medium text-gray-700 dark:text-dark-text-primary theme-transition">
+        {value}
+      </span>
       {error && error.severity === "critical" && (
-        <AlertCircle className="ml-2 h-4 w-4 text-red-500 flex-shrink-0 animate-pulse" />
+        <AlertCircle className="ml-2 h-4 w-4 text-red-500 dark:text-dark-error-primary flex-shrink-0 animate-pulse" />
       )}
       {error && error.severity === "warning" && (
-        <AlertTriangle className="ml-2 h-4 w-4 text-yellow-500 flex-shrink-0" />
+        <AlertTriangle className="ml-2 h-4 w-4 text-yellow-500 dark:text-dark-warning-primary flex-shrink-0" />
       )}
     </div>
   );
 
   return (
     <td
-      className={`px-6 py-4 whitespace-nowrap text-sm relative ${cellClass} transition-colors duration-150 ease-in-out border-b border-gray-100`}
+      className={`px-6 py-4 whitespace-nowrap text-sm relative ${cellClass} theme-transition border-b border-gray-100 dark:border-dark-border-default table-cell`}
       data-has-error={hasErrorValue ? "true" : "false"}
       data-error-severity={error?.severity || "none"}
       tabIndex={hasErrorValue ? 0 : undefined}
@@ -47,10 +49,12 @@ export default function TableCell({
               id={`error-${record.id}-${fieldName}`}
               className="bg-white/5 p-1 rounded"
             >
-              <div className="font-semibold mb-1 text-red-100">
+              <div className="font-semibold mb-1 text-red-100 dark:text-dark-error-primary">
                 {fieldName}:
               </div>
-              <div className="text-white">{error.message}</div>
+              <div className="text-white dark:text-dark-text-primary">
+                {error.message}
+              </div>
             </div>
           }
         >

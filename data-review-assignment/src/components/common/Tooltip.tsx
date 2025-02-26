@@ -60,15 +60,15 @@ export default function Tooltip({ content, children }: TooltipProps) {
       {isVisible && (
         <div
           ref={tooltipRef}
-          className={`absolute z-10 px-4 py-3 text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-blue-700 rounded-lg shadow-lg 
-            opacity-0 transition-opacity duration-300 ease-in-out tooltip border border-indigo-400/20 max-w-xs left-1/2 transform -translate-x-1/2 ${getPositionClasses()} ${
+          className={`absolute z-10 px-4 py-3 text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-blue-700 dark:from-dark-bg-tertiary dark:to-dark-bg-secondary rounded-lg shadow-lg 
+            opacity-0 transition-opacity duration-300 ease-in-out tooltip border border-indigo-400/20 dark:border-dark-border-focus max-w-xs left-1/2 transform -translate-x-1/2 ${getPositionClasses()} ${
             isVisible ? "opacity-100" : "opacity-0"
           }`}
           role="tooltip"
         >
           {content}
           <div
-            className={`tooltip-arrow absolute w-3 h-3 bg-indigo-600 transform rotate-45 left-1/2 -ml-1.5 ${getArrowClasses()}`}
+            className={`tooltip-arrow absolute w-3 h-3 bg-indigo-600 dark:bg-dark-bg-tertiary transform rotate-45 left-1/2 -ml-1.5 ${getArrowClasses()}`}
           ></div>
         </div>
       )}
