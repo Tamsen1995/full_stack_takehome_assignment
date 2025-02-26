@@ -1,112 +1,134 @@
-<a href="https://www.lume.ai" target="_blank">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="/data-review-assignment/public/logo_title.png" style="max-width: 100%; width: 250px; margin-bottom: 20px">
-    <img alt="OpenAI Cookbook Logo" src="/data-review-assignment/public/logo_title.png" width="250px">
-  </picture>
-</a>
+# Data Review Application
 
-<h3></h3>
- 
----
+## Overview
 
-### **Take-Home Assignment: Data Review, Editor, and Exporter**
+This application provides a data review interface for examining and managing records with potential errors. It allows users to view data in a tabular format, identify and inspect errors, and export data to CSV format for further analysis.
 
-**Objective**: Build a data review interface that queries JSON data from a Next.js API, displays the data in a table format with validation errors, and allows users to export the data in CSV format. You will also color-code validation errors and provide error details in an interactive way.
+## Features
 
-**Deliverables**:
+- **Data Visualization**: Display records in a responsive table with clear formatting
+- **Error Handling**: Visual indicators for records with errors, categorized by severity (critical/warning)
+- **Error Details**: Modal view for examining detailed error information for each record
+- **CSV Export**: One-click export functionality for data analysis in external tools
+- **Dark/Light Mode**: Theme toggle with persistent preferences using localStorage
+- **Interactive Tutorial**: Step-by-step guidance for new users with progress tracking
+- **Responsive Design**: Mobile-friendly interface that adapts to different screen sizes
+- **Accessibility**: Keyboard navigation, ARIA attributes, and focus management
 
-1. **Data Query from API**: Implement a Next.js API route that returns the provided mock JSON data (attached below).
-2. **Data Review Table**:
-    - Display the data in a table, flattening any nested fields (e.g., `address`) into separate columns (e.g., `Street`, `City`, `Zipcode`).
-    - Color-code validation errors in each column according to severity:
-        - Red for critical errors (must be fixed).
-        - Yellow for warnings (should be reviewed).
-        - Green for valid fields.
-    - **Hoverable Error Messages**: Each cell with a validation error should display the error message on hover as a tooltip.
-    - **Error Summary Modal**: Include an "Error Summary" modal with a clickable button or link that opens a modal. This modal should list all the validation errors for that specific row, with details for each error.
-3. **CSV Export**: Allow users to export the data to a CSV format.
+## Tech Stack
 
+- **Frontend Framework**: React 18 with Next.js 14
+- **Styling**: Tailwind CSS with custom theme configuration
+- **State Management**: React Context API for tutorial state
+- **Icons**: Lucide React for consistent iconography
 
-**Design Considerations**:
+## Architecture
 
-- **No Figma Provided**: We have deliberately not provided Figma or design assets for this project. This is to give you the freedom to design the table and modals as you see fit. Part of the evaluation will be based on your ability to create a user-friendly, intuitive UI without strict design guidelines. You're free to choose the best layout, color schemes, and UX patterns, and UI Libraries that fit the task.
+The application follows a component-based architecture with clear separation of concerns:
 
+### Core Components
 
-**Mock Data**: You will be working with the following mock JSON data. The data will always follow a static model. Your API should serve this data to the frontend:
+- **DataReviewTable**: Main container component that manages data fetching, theme toggling, and layout
+- **DataTable**: Renders the tabular data with appropriate headers and rows
+- **TableRow/TableCell**: Handle individual record display with error highlighting
+- **ErrorModal**: Displays detailed error information for selected records
+- **ExportButton**: Manages CSV data export functionality
+- **TutorialTooltip**: Provides interactive guidance with positioning and animations
 
-```json
-{
-  "records": [
-    {
-      "id": 1,
-      "name": "John Doe",
-      "email": "john.doe@example.com",
-      "street": "123 Main St",
-      "city": "New York",
-      "zipcode": "12345",
-      "phone": "123-456-7890",
-      "status": "active",
-      "errors": {
-        "phone": {
-          "message": "Invalid phone format",
-          "severity": "critical"
-        },
-        "zipcode": {
-          "message": "Invalid zipcode",
-          "severity": "warning"
-        }
-      }
-    },
-    {
-      "id": 2,
-      "name": "Jane Smith",
-      "email": "jane.smith@sample",
-      "street": "456 Elm St",
-      "city": "Los Angeles",
-      "zipcode": "",
-      "phone": "987-654-3210",
-      "status": "inactive",
-      "errors": {
-        "email": {
-          "message": "Invalid email format",
-          "severity": "critical"
-        },
-        "zipcode": {
-          "message": "Zipcode is missing",
-          "severity": "critical"
-        }
-      }
-    },
-    {
-      "id": 3,
-      "name": "Alice Johnson",
-      "email": "alice.johnson@example.com",
-      "street": "",
-      "city": "Chicago",
-      "zipcode": "60614",
-      "phone": "111-222-3333",
-      "status": "pending",
-      "errors": {
-        "street": {
-          "message": "Street address is missing",
-          "severity": "warning"
-        }
-      }
-    }
-  ]
-}
+### State Management
 
-```
+- **TutorialContext**: Manages tutorial state, progression, and persistence across sessions
+- Local component state for UI interactions and data display
 
-**Expectations**:
+### Data Flow
 
-- **Tech Stack**: Use **Next.js** for API and server-side rendering, React for frontend components. Styling can be done with **Tailwind CSS** or your **UI library of choice**.
-- **Time Estimation**: This assignment should take approximately 4–6 hours to complete.
-- **Submission**: Please ensure the following:
-  - Provide a GitHub repository link containing your code.
-    - Include a README file explaining your approach, assumptions, and any improvements you would make given more time.
-  - Deploy your project to a platform of your choice that supports modern web apps (e.g., Netlify, AWS Amplify, Render, or DigitalOcean).
-    - Share the live deployment link.
-    - Mention any specific setup steps or configurations required for running the application.
+1. Data is fetched from the API endpoint (`/api/data`) using the `fetchDataRecords` service
+2. The main component distributes data to child components
+3. User interactions trigger appropriate state updates and UI changes
+4. Error handling is managed at multiple levels for resilience
 
+### Styling Approach
 
+- Utility-first CSS with Tailwind
+- Custom theme configuration for dark/light mode with smooth transitions
+- Consistent design language across components
+- Custom CSS variables for theme colors
+
+## Implementation Details
+
+### Error Handling
+
+The application implements a comprehensive error handling system:
+
+- Visual indicators for fields with errors using color-coding
+- Severity-based categorization (critical/warning) with appropriate icons
+- Detailed error information in modal views with sorting by severity
+- Error counts displayed for quick reference
+- Tooltips for quick error information on hover
+
+### Tutorial System
+
+A step-by-step tutorial guides new users through the application:
+
+- Persistent state tracking across sessions using localStorage
+- Progress indicators showing current step and total steps
+- Targeted tooltips highlighting key features (theme toggle, export, error view)
+- Reset functionality to restart the tutorial via the help button
+
+### Theme Management
+
+The application supports both dark and light modes:
+
+- Theme persistence using document class and localStorage
+- Smooth transitions between themes with CSS variables
+- Consistent styling across all components with theme-specific colors
+- Accessibility considerations for both themes
+
+## Running Locally
+
+1. Install dependencies
+
+   ```
+   npm install
+   ```
+
+2. Start the development server
+
+   ```
+   npm run dev
+   ```
+
+3. Open [http://localhost:3000](http://localhost:3000) in your browser
+
+## Future Improvements
+
+Given more time, I would implement the following enhancements:
+
+1. **Advanced Filtering**: Add filtering capabilities for records based on status, error severity, etc.
+2. **Sorting Functionality**: Allow users to sort data by different columns
+3. **Pagination**: Implement pagination for handling larger datasets
+4. **Error Resolution**: Add functionality to mark errors as resolved or add notes
+5. **Data Editing**: Allow in-place editing of record data to fix errors
+6. **Enhanced Animations**: More polished transitions between states
+7. **Comprehensive Testing**: Add unit and integration tests for all components
+8. **Performance Monitoring**: Implement analytics to track performance metrics
+
+## Assumptions
+
+During development, I made the following assumptions:
+
+1. The data structure will remain consistent with the provided mock data
+2. The application will primarily be used on desktop devices, but should be responsive
+3. Users may need guidance when first using the application
+4. Error information is critical for user decision-making
+5. Dark mode is preferred by many users for extended usage
+
+## Approach
+
+My development approach focused on:
+
+1. **User Experience**: Creating an intuitive interface with clear error indicators and helpful tooltips
+2. **Accessibility**: Ensuring the application is usable by all users with keyboard navigation and ARIA attributes
+3. **Code Quality**: Writing maintainable, well-structured code with TypeScript for type safety
+4. **Performance**: Optimizing for smooth interactions and minimal load times
+5. **Progressive Enhancement**: Building core functionality first, then adding enhancements like the tutorial system
