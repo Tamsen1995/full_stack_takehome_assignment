@@ -1,6 +1,8 @@
+import { useState, useRef } from "react";
 import { Record } from "../../types";
 import TableCell from "./TableCell";
 import { getErrorCount } from "../../utils";
+import ErrorModal from "../ErrorModal/ErrorModal";
 
 interface Field {
   key: string;
@@ -13,6 +15,12 @@ interface TableRowProps {
 }
 
 export default function TableRow({ record, fields }: TableRowProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const triggerButtonRef = useRef<HTMLButtonElement>(null);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
   const getStatusBadge = (status: string) => {
     switch (status.toLowerCase()) {
       case "active":
@@ -43,29 +51,44 @@ export default function TableRow({ record, fields }: TableRowProps) {
   };
 
   return (
-    <tr className="hover:bg-gray-50 transition-colors duration-150 ease-in-out">
-      {fields.map((field) => (
-        <TableCell
-          key={field.key}
-          record={record}
-          fieldName={field.key}
-          value={
-            field.key === "status"
-              ? getStatusBadge(record.status)
-              : record[field.key as keyof Record]
-          }
-        />
-      ))}
-      <td className="px-6 py-4 text-right text-sm font-medium">
-        <button className="inline-flex items-center text-indigo-600 hover:text-indigo-900">
-          View Errors
-          {getErrorCount(record) > 0 && (
-            <span className="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-100 text-indigo-800">
-              {getErrorCount(record)}
-            </span>
-          )}
-        </button>
-      </td>
-    </tr>
+    <>
+      <tr className="hover:bg-gray-50 transition-colors duration-150 ease-in-out">
+        {fields.map((field) => (
+          <TableCell
+            key={field.key}
+            record={record}
+            fieldName={field.key}
+            value={
+              field.key === "status"
+                ? getStatusBadge(record.status)
+                : record[field.key as keyof Record]
+            }
+          />
+        ))}
+        <td className="px-6 py-4 text-right text-sm font-medium">
+          <button
+            ref={triggerButtonRef}
+            onClick={openModal}
+            className="inline-flex items-center text-indigo-600 hover:text-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 rounded px-2 py-1"
+            aria-label={`View errors for ${record.name}`}
+          >
+            View Errors
+            {getErrorCount(record) > 0 && (
+              <span className="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-100 text-indigo-800">
+                {getErrorCount(record)}
+              </span>
+            )}
+          </button>
+        </td>
+      </tr>
+
+      {/* Error Modal */}
+      <ErrorModal
+        record={record}
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        triggerRef={triggerButtonRef}
+      />
+    </>
   );
 }
