@@ -10,6 +10,8 @@ export interface TutorialTooltipProps {
   position?: "top" | "bottom" | "left" | "right";
   id: string;
   showOnHover?: boolean;
+  currentStepIndex?: number;
+  totalSteps?: number;
 }
 
 export default function TutorialTooltip({
@@ -20,14 +22,25 @@ export default function TutorialTooltip({
   position = "bottom",
   id,
   showOnHover = false,
+  currentStepIndex,
+  totalSteps,
 }: TutorialTooltipProps) {
   const [isOpen, setIsOpen] = useState(initialIsOpen);
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
   const tooltipRef = useRef<HTMLDivElement>(null);
+  const [isAnimated, setIsAnimated] = useState(false);
 
   // Update isOpen when initialIsOpen changes
   useEffect(() => {
     setIsOpen(initialIsOpen);
+    if (initialIsOpen) {
+      // Reset animation state when tooltip opens
+      setIsAnimated(false);
+      // Small delay to ensure DOM is ready before animating
+      setTimeout(() => {
+        setIsAnimated(true);
+      }, 50);
+    }
   }, [initialIsOpen]);
 
   // Calculate and update tooltip position
@@ -139,10 +152,32 @@ export default function TutorialTooltip({
     }
   };
 
+  // Animation classes based on position
+  const getAnimationClasses = () => {
+    const baseClasses = "transition-all duration-300 ease-in-out ";
+
+    if (!isAnimated) {
+      switch (position) {
+        case "top":
+          return baseClasses + "opacity-0 -translate-y-2";
+        case "bottom":
+          return baseClasses + "opacity-0 translate-y-2";
+        case "left":
+          return baseClasses + "opacity-0 -translate-x-2";
+        case "right":
+          return baseClasses + "opacity-0 translate-x-2";
+        default:
+          return baseClasses + "opacity-0";
+      }
+    }
+
+    return baseClasses + "opacity-100 translate-y-0 translate-x-0";
+  };
+
   return (
     <div
       ref={tooltipRef}
-      className="fixed z-50 theme-transition"
+      className={`fixed z-50 theme-transition ${getAnimationClasses()}`}
       style={{
         top: `${tooltipPosition.top}px`,
         left: `${tooltipPosition.left}px`,
@@ -150,10 +185,17 @@ export default function TutorialTooltip({
       id={id}
       role="tooltip"
     >
-      <div className="relative bg-indigo-600 dark:bg-dark-accent-primary text-white dark:text-dark-text-primary p-4 rounded-lg shadow-lg max-w-xs theme-transition border border-indigo-400/20 dark:border-dark-border-focus">
+      <div className="relative bg-gradient-to-r from-indigo-600 to-indigo-500 dark:from-dark-accent-primary dark:to-dark-accent-hover text-white dark:text-dark-text-primary p-4 rounded-lg shadow-lg max-w-xs theme-transition border border-indigo-400/20 dark:border-dark-border-focus">
         {!showOnHover && (
           <div className="flex justify-between items-start mb-2">
-            <h3 className="font-bold text-white">Tutorial</h3>
+            <h3 className="font-bold text-white">
+              Tutorial
+              {currentStepIndex && totalSteps && (
+                <span className="text-xs font-normal ml-2 text-white/80">
+                  Step {currentStepIndex} of {totalSteps}
+                </span>
+              )}
+            </h3>
             <Button
               onClick={handleClose}
               variant="ghost"
@@ -183,7 +225,7 @@ export default function TutorialTooltip({
 
         {/* Arrow pointing to the target element */}
         <div
-          className={`absolute w-3 h-3 bg-indigo-600 dark:bg-dark-accent-primary transform ${getArrowPosition()} theme-transition`}
+          className={`absolute w-3 h-3 bg-gradient-to-r from-indigo-600 to-indigo-500 dark:from-dark-accent-primary dark:to-dark-accent-hover transform ${getArrowPosition()} theme-transition`}
         ></div>
       </div>
     </div>

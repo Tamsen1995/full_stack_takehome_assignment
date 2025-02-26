@@ -6,14 +6,16 @@ import React, {
   ReactNode,
 } from "react";
 
-// Define the tutorial steps
-export type TutorialStep = "theme-toggle" | "export-button" | "error-view";
+// Define tutorial steps in order
+export const TUTORIAL_STEPS = ["theme-toggle", "export-button", "error-view"];
 
 interface TutorialContextType {
-  completedSteps: TutorialStep[];
-  currentStep: TutorialStep | null;
+  currentStep: string | null;
+  currentStepIndex: number;
+  totalSteps: number;
+  completedSteps: string[];
   isFirstVisit: boolean;
-  markStepComplete: (step: TutorialStep) => void;
+  handleTutorialComplete: (step: string) => void;
   resetTutorial: () => void;
 }
 
@@ -21,103 +23,82 @@ const TutorialContext = createContext<TutorialContextType | undefined>(
   undefined
 );
 
-// Define the order of tutorial steps
-const TUTORIAL_STEPS: TutorialStep[] = [
-  "theme-toggle",
-  "export-button",
-  "error-view",
-];
+export function TutorialProvider({ children }: { children: ReactNode }) {
+  const [completedSteps, setCompletedSteps] = useState<string[]>([]);
+  const [isFirstVisit, setIsFirstVisit] = useState(false);
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const totalSteps = TUTORIAL_STEPS.length;
 
-interface TutorialProviderProps {
-  children: ReactNode;
-}
-
-export function TutorialProvider({ children }: TutorialProviderProps) {
-  const [completedSteps, setCompletedSteps] = useState<TutorialStep[]>([]);
-  const [currentStep, setCurrentStep] = useState<TutorialStep | null>(null);
-  const [isFirstVisit, setIsFirstVisit] = useState(true);
-
-  // Initialize from localStorage on component mount
   useEffect(() => {
-    // Check if we're in a browser environment (to avoid SSR issues)
-    if (typeof window !== "undefined") {
-      const storedCompletedSteps = localStorage.getItem(
-        "tutorial-completed-steps"
-      );
-      const storedIsFirstVisit = localStorage.getItem("is-first-visit");
+    // Check if this is the first visit
+    const hasVisited = localStorage.getItem("hasVisitedBefore");
+    if (!hasVisited) {
+      setIsFirstVisit(true);
+      localStorage.setItem("hasVisitedBefore", "true");
+    }
 
-      if (storedCompletedSteps) {
-        try {
-          setCompletedSteps(JSON.parse(storedCompletedSteps));
-        } catch (e) {
-          console.error("Error parsing completed steps from localStorage", e);
-          setCompletedSteps([]);
-        }
-      }
+    // Load completed steps from localStorage
+    const savedCompletedSteps = localStorage.getItem("completedTutorialSteps");
+    if (savedCompletedSteps) {
+      try {
+        const parsedSteps = JSON.parse(savedCompletedSteps);
+        setCompletedSteps(parsedSteps);
 
-      if (storedIsFirstVisit === "false") {
-        setIsFirstVisit(false);
-      } else {
-        // If this key doesn't exist yet, it's the first visit
-        localStorage.setItem("is-first-visit", "true");
+        // Find the current step index based on completed steps
+        const lastCompletedIndex = TUTORIAL_STEPS.findIndex(
+          (step) => !parsedSteps.includes(step)
+        );
+        setCurrentStepIndex(
+          lastCompletedIndex === -1 ? TUTORIAL_STEPS.length : lastCompletedIndex
+        );
+      } catch (e) {
+        console.error("Error parsing completed tutorial steps", e);
+        setCompletedSteps([]);
+        setCurrentStepIndex(0);
       }
     }
   }, []);
 
-  // Update current step based on completed steps
-  useEffect(() => {
-    // Find the first step that hasn't been completed yet
-    const nextStep = TUTORIAL_STEPS.find(
-      (step) => !completedSteps.includes(step)
-    );
-    setCurrentStep(nextStep || null);
-
-    // Save completed steps to localStorage
-    if (typeof window !== "undefined") {
-      localStorage.setItem(
-        "tutorial-completed-steps",
-        JSON.stringify(completedSteps)
-      );
-    }
-  }, [completedSteps]);
-
-  const markStepComplete = (step: TutorialStep) => {
+  const handleTutorialComplete = (step: string) => {
     if (!completedSteps.includes(step)) {
-      const newCompletedSteps = [...completedSteps, step];
-      setCompletedSteps(newCompletedSteps);
+      const updatedSteps = [...completedSteps, step];
+      setCompletedSteps(updatedSteps);
+      localStorage.setItem(
+        "completedTutorialSteps",
+        JSON.stringify(updatedSteps)
+      );
 
-      // If this was the first visit, mark it as no longer the first visit
-      if (isFirstVisit && newCompletedSteps.length === TUTORIAL_STEPS.length) {
-        setIsFirstVisit(false);
-        if (typeof window !== "undefined") {
-          localStorage.setItem("is-first-visit", "false");
-        }
+      // Update current step index
+      const nextStepIndex = TUTORIAL_STEPS.indexOf(step) + 1;
+      if (nextStepIndex < TUTORIAL_STEPS.length) {
+        setCurrentStepIndex(nextStepIndex);
       }
     }
   };
 
   const resetTutorial = () => {
+    localStorage.removeItem("completedTutorialSteps");
+    localStorage.removeItem("hasVisitedBefore");
     setCompletedSteps([]);
     setIsFirstVisit(true);
-
-    if (typeof window !== "undefined") {
-      // Clear all tutorial-related localStorage items
-      localStorage.removeItem("tutorial-completed-steps");
-      localStorage.removeItem("is-first-visit");
-
-      // Set default values
-      localStorage.setItem("tutorial-completed-steps", JSON.stringify([]));
-      localStorage.setItem("is-first-visit", "true");
-    }
+    setCurrentStepIndex(0);
   };
+
+  // Determine current step based on completed steps
+  const currentStep =
+    currentStepIndex < TUTORIAL_STEPS.length
+      ? TUTORIAL_STEPS[currentStepIndex]
+      : null;
 
   return (
     <TutorialContext.Provider
       value={{
-        completedSteps,
         currentStep,
+        currentStepIndex: currentStepIndex + 1, // 1-indexed for display
+        totalSteps,
+        completedSteps,
         isFirstVisit,
-        markStepComplete,
+        handleTutorialComplete,
         resetTutorial,
       }}
     >

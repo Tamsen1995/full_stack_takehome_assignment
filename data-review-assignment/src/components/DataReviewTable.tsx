@@ -1,14 +1,16 @@
 // components/DataReview.tsx
 
-import { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { DataResponse } from "../types";
 import DataTable from "./DataTable/DataTable";
 import ExportButton from "./ExportButton/ExportButton";
 import { fetchDataRecords } from "../services/api";
 import Button from "./common/Button";
-import { Moon, Sun, HelpCircle } from "lucide-react";
+import { Moon, Sun, HelpCircle, Download } from "lucide-react";
 import TutorialTooltip from "./common/TutorialTooltip";
-import { useTutorial, TutorialStep } from "../context/TutorialContext";
+import { useTutorial } from "../context/TutorialContext";
+import ErrorModal from "./ErrorModal/ErrorModal";
+import { convertToCSV } from "../utils";
 
 export default function DataReviewTable() {
   const [data, setData] = useState<DataResponse | null>(null);
@@ -22,8 +24,14 @@ export default function DataReviewTable() {
   const helpButtonRef = useRef<HTMLButtonElement>(null);
 
   // Tutorial context
-  const { currentStep, markStepComplete, isFirstVisit, resetTutorial } =
-    useTutorial();
+  const {
+    isFirstVisit,
+    currentStep,
+    handleTutorialComplete,
+    resetTutorial,
+    currentStepIndex,
+    totalSteps,
+  } = useTutorial();
 
   const fetchData = async () => {
     try {
@@ -61,16 +69,27 @@ export default function DataReviewTable() {
     setDarkMode(!darkMode);
   };
 
-  // Handle tutorial step completion
-  const handleTutorialComplete = (step: TutorialStep) => {
-    markStepComplete(step);
-  };
-
   // Handle tutorial reset
   const handleResetTutorial = () => {
     resetTutorial();
     // Force a page reload to ensure all components re-render with the new tutorial state
     window.location.reload();
+  };
+
+  // Add export function
+  const exportData = () => {
+    if (!data) return;
+
+    const csv = convertToCSV(data.records);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "data-export.csv");
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -88,15 +107,20 @@ export default function DataReviewTable() {
                 onClick={handleResetTutorial}
                 variant="ghost"
                 size="icon"
-                aria-label="Show tutorial"
-                className="text-indigo-500 dark:text-dark-accent-secondary"
+                className="text-gray-500 hover:text-gray-700 dark:text-dark-text-secondary dark:hover:text-dark-text-primary theme-transition"
+                aria-label="Help"
               >
                 <HelpCircle className="h-5 w-5" />
               </Button>
 
               <TutorialTooltip
                 targetRef={helpButtonRef}
-                content={<p>Click to restart the tutorial tooltips.</p>}
+                content={
+                  <p>
+                    Need help? Click here to <strong>reset the tutorial</strong>{" "}
+                    and see all tips again.
+                  </p>
+                }
                 isOpen={false}
                 onClose={() => {}}
                 position="bottom"
@@ -127,14 +151,16 @@ export default function DataReviewTable() {
                 targetRef={themeToggleRef}
                 content={
                   <p>
-                    This app uses <strong>dark mode</strong> by default. Click
-                    here to switch to <strong>light mode</strong>.
+                    Toggle between <strong>dark mode</strong> and{" "}
+                    <strong>light mode</strong> to adjust the app's appearance.
                   </p>
                 }
                 isOpen={isFirstVisit && currentStep === "theme-toggle"}
                 onClose={() => handleTutorialComplete("theme-toggle")}
                 position="bottom"
                 id="theme-toggle-tutorial"
+                currentStepIndex={currentStepIndex}
+                totalSteps={totalSteps}
               />
             </div>
 
@@ -146,18 +172,16 @@ export default function DataReviewTable() {
                 targetRef={exportButtonRef}
                 content={
                   <p>
-                    Use this button to <strong>export</strong> your data to a
-                    CSV file.
+                    Click here to <strong>export</strong> your data to a CSV
+                    file for further analysis.
                   </p>
                 }
-                isOpen={
-                  isFirstVisit &&
-                  currentStep === "export-button" &&
-                  data !== null
-                }
+                isOpen={isFirstVisit && currentStep === "export-button"}
                 onClose={() => handleTutorialComplete("export-button")}
                 position="bottom"
                 id="export-button-tutorial"
+                currentStepIndex={currentStepIndex}
+                totalSteps={totalSteps}
               />
             </div>
           </div>
