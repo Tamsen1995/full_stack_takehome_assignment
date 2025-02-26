@@ -2,6 +2,7 @@ import { Record, Error } from "../../types";
 import { getSeverityLabel } from "../../utils";
 import { AlertCircle, AlertTriangle, X } from "lucide-react";
 import { useEffect, useRef } from "react";
+import Button from "../common/Button";
 
 interface ErrorModalProps {
   record: Record;
@@ -121,14 +122,15 @@ export default function ErrorModal({
           >
             Error Summary for {record.name}
           </h2>
-          <button
+          <Button
             ref={closeButtonRef}
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 p-1.5 rounded-full hover:bg-gray-100 transition-colors"
+            variant="ghost"
+            size="icon"
             aria-label="Close modal"
           >
             <X className="h-5 w-5" />
-          </button>
+          </Button>
         </div>
 
         <div className="max-h-96 overflow-y-auto custom-scrollbar">
@@ -174,13 +176,14 @@ export default function ErrorModal({
         </div>
 
         <div className="mt-6 flex justify-end">
-          <button
+          <Button
             ref={confirmButtonRef}
             onClick={onClose}
-            className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-lg hover:from-indigo-700 hover:to-blue-700 transition-all shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            variant="primary"
+            size="md"
           >
             Close
-          </button>
+          </Button>
         </div>
       </div>
     </div>

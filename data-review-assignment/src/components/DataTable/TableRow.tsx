@@ -3,6 +3,7 @@ import { Record } from "../../types";
 import TableCell from "./TableCell";
 import { getErrorCount } from "../../utils";
 import ErrorModal from "../ErrorModal/ErrorModal";
+import Button from "../common/Button";
 
 interface Field {
   key: string;
@@ -66,10 +67,11 @@ export default function TableRow({ record, fields }: TableRowProps) {
           />
         ))}
         <td className="px-6 py-4 text-right text-sm font-medium">
-          <button
+          <Button
             ref={triggerButtonRef}
             onClick={openModal}
-            className="inline-flex items-center text-indigo-600 hover:text-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 rounded-md px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 transition-colors duration-150"
+            variant="link"
+            size="sm"
             aria-label={`View errors for ${record.name}`}
           >
             View Errors
@@ -78,7 +80,7 @@ export default function TableRow({ record, fields }: TableRowProps) {
                 {getErrorCount(record)}
               </span>
             )}
-          </button>
+          </Button>
         </td>
       </tr>
 

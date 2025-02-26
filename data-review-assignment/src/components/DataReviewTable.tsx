@@ -5,6 +5,7 @@ import { DataResponse } from "../types";
 import DataTable from "./DataTable/DataTable";
 import ExportButton from "./ExportButton/ExportButton";
 import { fetchDataRecords } from "../services/api";
+import Button from "./common/Button";
 
 export default function DataReviewTable() {
   const [data, setData] = useState<DataResponse | null>(null);
@@ -61,12 +62,14 @@ export default function DataReviewTable() {
       {error && (
         <div className="p-4 bg-red-50 border border-red-200 rounded-md">
           <p className="text-red-500">{error}</p>
-          <button
+          <Button
             onClick={handleRetry}
-            className="mt-2 px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200"
+            variant="danger"
+            size="sm"
+            className="mt-2"
           >
             Retry
-          </button>
+          </Button>
         </div>
       )}
 
