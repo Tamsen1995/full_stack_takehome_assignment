@@ -32,9 +32,9 @@ export default function ErrorModal({
   // Get the appropriate icon based on error severity
   const getErrorIcon = (error: Error) => {
     return error.severity === "critical" ? (
-      <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0" />
+      <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 text-red-500 flex-shrink-0" />
     ) : (
-      <AlertTriangle className="h-5 w-5 text-yellow-500 flex-shrink-0" />
+      <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-500 flex-shrink-0" />
     );
   };
 
@@ -99,7 +99,7 @@ export default function ErrorModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
       onClick={(e) => {
         // Close modal when clicking the backdrop
         if (e.target === e.currentTarget) onClose();
@@ -111,50 +111,57 @@ export default function ErrorModal({
     >
       <div
         ref={modalRef}
-        className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full m-4"
+        className="bg-white p-6 rounded-xl shadow-xl max-w-md w-full m-4 border border-gray-200"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex justify-between items-center mb-4">
-          <h2 id="error-modal-title" className="text-xl font-bold">
+        <div className="flex justify-between items-center mb-5 border-b border-gray-100 pb-3">
+          <h2
+            id="error-modal-title"
+            className="text-lg sm:text-xl font-bold text-gray-800"
+          >
             Error Summary for {record.name}
           </h2>
           <button
             ref={closeButtonRef}
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100 transition-colors"
+            className="text-gray-500 hover:text-gray-700 p-1.5 rounded-full hover:bg-gray-100 transition-colors"
             aria-label="Close modal"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        <div className="max-h-96 overflow-y-auto">
+        <div className="max-h-96 overflow-y-auto custom-scrollbar">
           {hasErrors ? (
             <ul className="space-y-3">
               {sortedErrors.map(([fieldName, error]) => (
                 <li
                   key={fieldName}
-                  className={`p-3 rounded-md flex items-start ${
+                  className={`p-2 sm:p-3 rounded-lg flex items-start ${
                     error.severity === "critical"
                       ? "bg-red-50 border-l-4 border-red-500"
                       : "bg-yellow-50 border-l-4 border-yellow-500"
                   }`}
                 >
                   <div className="mr-3 mt-0.5">{getErrorIcon(error)}</div>
-                  <div>
-                    <div className="flex items-center">
-                      <h3 className="font-semibold capitalize">{fieldName}</h3>
+                  <div className="flex-1">
+                    <div className="flex items-center flex-wrap gap-2">
+                      <h3 className="font-semibold capitalize text-gray-800">
+                        {fieldName}
+                      </h3>
                       <span
-                        className={`ml-2 text-xs px-2 py-0.5 rounded-full ${
+                        className={`text-xs px-2 py-0.5 rounded-full ${
                           error.severity === "critical"
-                            ? "bg-red-100 text-red-800"
-                            : "bg-yellow-100 text-yellow-800"
+                            ? "bg-red-100 text-red-800 border border-red-200"
+                            : "bg-yellow-100 text-yellow-800 border border-yellow-200"
                         }`}
                       >
                         {getSeverityLabel(error.severity)}
                       </span>
                     </div>
-                    <p className="text-sm mt-1">{error.message}</p>
+                    <p className="text-sm mt-1 text-gray-700">
+                      {error.message}
+                    </p>
                   </div>
                 </li>
               ))}
@@ -170,7 +177,7 @@ export default function ErrorModal({
           <button
             ref={confirmButtonRef}
             onClick={onClose}
-            className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-lg hover:from-indigo-700 hover:to-blue-700 transition-all shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
           >
             Close
           </button>

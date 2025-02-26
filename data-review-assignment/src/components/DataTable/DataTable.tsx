@@ -20,15 +20,17 @@ export default function DataTable({ records }: DataTableProps) {
   ];
 
   return (
-    <div className="overflow-x-auto rounded-lg shadow">
-      <table className="min-w-full divide-y divide-gray-200">
-        <TableHeader fields={tableFields} />
-        <tbody className="bg-white divide-y divide-gray-200">
-          {records.map((record) => (
-            <TableRow key={record.id} record={record} fields={tableFields} />
-          ))}
-        </tbody>
-      </table>
+    <div className="overflow-hidden rounded-xl shadow-md border border-gray-200 bg-white">
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200">
+          <TableHeader fields={tableFields} />
+          <tbody className="bg-white divide-y divide-gray-200">
+            {records.map((record) => (
+              <TableRow key={record.id} record={record} fields={tableFields} />
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

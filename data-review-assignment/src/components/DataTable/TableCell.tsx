@@ -20,9 +20,9 @@ export default function TableCell({
 
   const cellContent = (
     <div className="flex items-center">
-      <span className="flex-grow">{value}</span>
+      <span className="flex-grow font-medium text-gray-700">{value}</span>
       {error && error.severity === "critical" && (
-        <AlertCircle className="ml-2 h-4 w-4 text-red-500 flex-shrink-0" />
+        <AlertCircle className="ml-2 h-4 w-4 text-red-500 flex-shrink-0 animate-pulse" />
       )}
       {error && error.severity === "warning" && (
         <AlertTriangle className="ml-2 h-4 w-4 text-yellow-500 flex-shrink-0" />
@@ -32,7 +32,7 @@ export default function TableCell({
 
   return (
     <td
-      className={`px-6 py-4 whitespace-nowrap text-sm relative ${cellClass} transition-colors duration-150 ease-in-out`}
+      className={`px-6 py-4 whitespace-nowrap text-sm relative ${cellClass} transition-colors duration-150 ease-in-out border-b border-gray-100`}
       data-has-error={hasErrorValue ? "true" : "false"}
       data-error-severity={error?.severity || "none"}
       tabIndex={hasErrorValue ? 0 : undefined}
@@ -43,9 +43,14 @@ export default function TableCell({
       {hasErrorValue ? (
         <Tooltip
           content={
-            <div id={`error-${record.id}-${fieldName}`}>
-              <div className="font-semibold mb-1">{fieldName}:</div>
-              <div>{error.message}</div>
+            <div
+              id={`error-${record.id}-${fieldName}`}
+              className="bg-white/5 p-1 rounded"
+            >
+              <div className="font-semibold mb-1 text-red-100">
+                {fieldName}:
+              </div>
+              <div className="text-white">{error.message}</div>
             </div>
           }
         >

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Record } from "../../types";
 import { convertToCSV } from "../../utils";
+import { Download } from "lucide-react";
 
 interface ExportButtonProps {
   records: Record[];
@@ -46,17 +47,19 @@ export default function ExportButton({ records }: ExportButtonProps) {
     <button
       onClick={handleExport}
       disabled={isExporting || records.length === 0}
-      className={`px-4 py-2 rounded flex items-center ${
-        isExporting
-          ? "bg-green-400 cursor-wait"
-          : "bg-green-500 hover:bg-green-600"
-      } text-white transition-colors`}
+      className={`px-4 py-2 rounded-lg shadow-md flex items-center justify-center space-x-2 font-medium transition-all duration-200 ${
+        records.length === 0
+          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+          : isExporting
+          ? "bg-gradient-to-r from-emerald-500 to-green-500 text-white cursor-wait"
+          : "bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 text-white hover:shadow-lg"
+      }`}
       aria-label="Export data to CSV"
     >
       {isExporting ? (
         <>
           <svg
-            className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+            className="animate-spin h-5 w-5 text-white"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -75,10 +78,13 @@ export default function ExportButton({ records }: ExportButtonProps) {
               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
             ></path>
           </svg>
-          Exporting...
+          <span>Exporting...</span>
         </>
       ) : (
-        "Export to CSV"
+        <>
+          <Download className="h-5 w-5" />
+          <span>Export to CSV</span>
+        </>
       )}
     </button>
   );
