@@ -1,11 +1,19 @@
 module.exports = {
-  darkMode: false, // Disable dark mode
+  darkMode: "media", // Use media queries for dark mode
   content: [
-    "./pages/**/*.{js,ts,jsx,tsx}",
-    "./components/**/*.{js,ts,jsx,tsx}",
+    "./src/pages/**/*.{js,ts,jsx,tsx}",
+    "./src/components/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        error: {
+          critical: "#FEE2E2", // Light red for critical errors
+          warning: "#FEF3C7", // Light yellow for warnings
+          valid: "#ECFDF5", // Light green for valid fields
+        },
+      },
+    },
   },
   plugins: [],
 };
