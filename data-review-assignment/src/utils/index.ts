@@ -16,15 +16,15 @@ export const getError = (record: Record, fieldName: string): Error | null => {
 // Get the appropriate CSS class based on error severity
 export const getErrorClass = (record: Record, fieldName: string): string => {
   const error = getError(record, fieldName);
-  if (!error) return ""; // No error
+  if (!error) return "bg-white border-transparent"; // No error
 
   switch (error.severity) {
     case "critical":
-      return "bg-red-100 text-red-800";
+      return "bg-red-50 text-red-800 border-l-4 border-red-500";
     case "warning":
-      return "bg-yellow-100 text-yellow-800";
+      return "bg-yellow-50 text-yellow-800 border-l-4 border-yellow-500";
     default:
-      return "";
+      return "bg-white border-transparent";
   }
 };
 
@@ -38,6 +38,11 @@ export const getSeverityLabel = (severity: ErrorSeverity): string => {
     default:
       return severity;
   }
+};
+
+// Count the number of errors in a record
+export const getErrorCount = (record: Record): number => {
+  return Object.keys(record.errors).length;
 };
 
 // Convert records to CSV format (stub for now)
