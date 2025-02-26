@@ -7,7 +7,6 @@ import Button from "../common/Button";
 import TutorialTooltip from "../common/TutorialTooltip";
 import { useTutorial } from "../../context/TutorialContext";
 import { AlertCircle } from "lucide-react";
-import ErrorView from "../ErrorView/ErrorView";
 
 interface Field {
   key: string;
@@ -23,8 +22,6 @@ interface TableRowProps {
 export default function TableRow({ record, fields, index }: TableRowProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const triggerButtonRef = useRef<HTMLButtonElement>(null);
-  const errorButtonRef = useRef<HTMLButtonElement>(null);
-  const [showErrors, setShowErrors] = useState(false);
   const [shouldShowTutorial, setShouldShowTutorial] = useState(false);
 
   // Tutorial context
@@ -100,52 +97,46 @@ export default function TableRow({ record, fields, index }: TableRowProps) {
         ))}
         <td className="px-6 py-4 text-right text-sm font-medium">
           <div className="relative inline-block">
-            {hasErrors && (
-              <div className="relative">
-                <Button
-                  ref={errorButtonRef}
-                  onClick={() => setShowErrors(!showErrors)}
-                  variant="ghost"
-                  size="sm"
-                  className={`text-red-600 dark:text-dark-error-primary hover:text-red-800 dark:hover:text-dark-error-hover theme-transition ${
-                    showErrors ? "bg-red-50 dark:bg-dark-error-bg/30" : ""
-                  }`}
-                >
-                  <AlertCircle className="h-4 w-4 mr-1" />
-                  {errorCount} {errorCount === 1 ? "Error" : "Errors"}
-                </Button>
+            <Button
+              ref={triggerButtonRef}
+              onClick={openModal}
+              variant="link"
+              size="sm"
+              aria-label={`View errors for ${record.name}`}
+            >
+              View Errors
+              {hasErrors && (
+                <span className="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-200 text-indigo-800 dark:bg-dark-accent-primary/30 dark:text-dark-accent-secondary theme-transition">
+                  {errorCount}
+                </span>
+              )}
+            </Button>
 
-                <TutorialTooltip
-                  targetRef={errorButtonRef}
-                  content={
-                    <p>
-                      This record has{" "}
-                      <strong>
-                        {errorCount} {errorCount === 1 ? "error" : "errors"}
-                      </strong>
-                      . Click to view details and take action.
-                    </p>
-                  }
-                  isOpen={shouldShowTutorial}
-                  onClose={() => handleTutorialComplete("error-view")}
-                  position="left"
-                  id="error-view-tutorial"
-                  currentStepIndex={currentStepIndex}
-                  totalSteps={totalSteps}
-                />
-              </div>
-            )}
+            {/* Error view tutorial tooltip */}
+            <TutorialTooltip
+              targetRef={triggerButtonRef}
+              content={
+                <p>
+                  Click here to view detailed <strong>error information</strong>{" "}
+                  for this record.
+                  {hasErrors && (
+                    <span className="block mt-1 text-sm opacity-90">
+                      This record has {errorCount}{" "}
+                      {errorCount === 1 ? "error" : "errors"}.
+                    </span>
+                  )}
+                </p>
+              }
+              isOpen={shouldShowTutorial}
+              onClose={() => handleTutorialComplete("error-view")}
+              position="left"
+              id="error-view-tutorial"
+              currentStepIndex={currentStepIndex}
+              totalSteps={totalSteps}
+            />
           </div>
         </td>
       </tr>
-
-      {showErrors && hasErrors && (
-        <tr>
-          <td colSpan={fields.length + 1}>
-            <ErrorView record={record} onClose={() => setShowErrors(false)} />
-          </td>
-        </tr>
-      )}
 
       {/* Error Modal */}
       <ErrorModal
