@@ -1,18 +1,29 @@
 // components/DataReview.tsx
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { DataResponse } from "../types";
 import DataTable from "./DataTable/DataTable";
 import ExportButton from "./ExportButton/ExportButton";
 import { fetchDataRecords } from "../services/api";
 import Button from "./common/Button";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun, HelpCircle } from "lucide-react";
+import TutorialTooltip from "./common/TutorialTooltip";
+import { useTutorial, TutorialStep } from "../context/TutorialContext";
 
 export default function DataReviewTable() {
   const [data, setData] = useState<DataResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [darkMode, setDarkMode] = useState<boolean>(true);
+
+  // Refs for tutorial tooltips
+  const themeToggleRef = useRef<HTMLButtonElement>(null);
+  const exportButtonRef = useRef<HTMLDivElement>(null);
+  const helpButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Tutorial context
+  const { currentStep, markStepComplete, isFirstVisit, resetTutorial } =
+    useTutorial();
 
   const fetchData = async () => {
     try {
@@ -34,6 +45,7 @@ export default function DataReviewTable() {
 
   // Toggle dark mode and update document class
   useEffect(() => {
+    // Apply dark mode by default
     if (darkMode) {
       document.documentElement.classList.add("dark");
     } else {
@@ -49,6 +61,18 @@ export default function DataReviewTable() {
     setDarkMode(!darkMode);
   };
 
+  // Handle tutorial step completion
+  const handleTutorialComplete = (step: TutorialStep) => {
+    markStepComplete(step);
+  };
+
+  // Handle tutorial reset
+  const handleResetTutorial = () => {
+    resetTutorial();
+    // Force a page reload to ensure all components re-render with the new tutorial state
+    window.location.reload();
+  };
+
   return (
     <div className="min-h-screen theme-transition bg-white dark:bg-dark-bg-primary">
       <div className="container mx-auto p-4">
@@ -57,21 +81,85 @@ export default function DataReviewTable() {
             Data Review
           </h1>
           <div className="flex items-center space-x-3">
-            <Button
-              onClick={toggleDarkMode}
-              variant="ghost"
-              size="icon"
-              aria-label={
-                darkMode ? "Switch to light mode" : "Switch to dark mode"
-              }
-            >
-              {darkMode ? (
-                <Sun className="h-5 w-5" />
-              ) : (
-                <Moon className="h-5 w-5" />
-              )}
-            </Button>
-            {data && <ExportButton records={data.records} />}
+            {/* Help button with tooltip */}
+            <div className="relative">
+              <Button
+                ref={helpButtonRef}
+                onClick={handleResetTutorial}
+                variant="ghost"
+                size="icon"
+                aria-label="Show tutorial"
+                className="text-indigo-500 dark:text-dark-accent-secondary"
+              >
+                <HelpCircle className="h-5 w-5" />
+              </Button>
+
+              <TutorialTooltip
+                targetRef={helpButtonRef}
+                content={<p>Click to restart the tutorial tooltips.</p>}
+                isOpen={false}
+                onClose={() => {}}
+                position="bottom"
+                id="help-button-tutorial"
+                showOnHover={true}
+              />
+            </div>
+
+            {/* Theme toggle button with tooltip */}
+            <div className="relative">
+              <Button
+                ref={themeToggleRef}
+                onClick={toggleDarkMode}
+                variant="ghost"
+                size="icon"
+                aria-label={
+                  darkMode ? "Switch to light mode" : "Switch to dark mode"
+                }
+              >
+                {darkMode ? (
+                  <Sun className="h-5 w-5" />
+                ) : (
+                  <Moon className="h-5 w-5" />
+                )}
+              </Button>
+
+              <TutorialTooltip
+                targetRef={themeToggleRef}
+                content={
+                  <p>
+                    This app uses <strong>dark mode</strong> by default. Click
+                    here to switch to <strong>light mode</strong>.
+                  </p>
+                }
+                isOpen={isFirstVisit && currentStep === "theme-toggle"}
+                onClose={() => handleTutorialComplete("theme-toggle")}
+                position="bottom"
+                id="theme-toggle-tutorial"
+              />
+            </div>
+
+            {/* Export button with tooltip */}
+            <div className="relative" ref={exportButtonRef}>
+              {data && <ExportButton records={data.records} />}
+
+              <TutorialTooltip
+                targetRef={exportButtonRef}
+                content={
+                  <p>
+                    Use this button to <strong>export</strong> your data to a
+                    CSV file.
+                  </p>
+                }
+                isOpen={
+                  isFirstVisit &&
+                  currentStep === "export-button" &&
+                  data !== null
+                }
+                onClose={() => handleTutorialComplete("export-button")}
+                position="bottom"
+                id="export-button-tutorial"
+              />
+            </div>
           </div>
         </div>
 

@@ -25,8 +25,13 @@ export default function DataTable({ records }: DataTableProps) {
         <table className="min-w-full divide-y divide-gray-200 dark:divide-dark-border-default">
           <TableHeader fields={tableFields} />
           <tbody className="bg-white dark:bg-dark-bg-secondary divide-y divide-gray-200 dark:divide-dark-border-default">
-            {records.map((record) => (
-              <TableRow key={record.id} record={record} fields={tableFields} />
+            {records.map((record, index) => (
+              <TableRow
+                key={record.id}
+                record={record}
+                fields={tableFields}
+                index={index}
+              />
             ))}
           </tbody>
         </table>

@@ -1,9 +1,11 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Record } from "../../types";
 import TableCell from "./TableCell";
 import { getErrorCount } from "../../utils";
 import ErrorModal from "../ErrorModal/ErrorModal";
 import Button from "../common/Button";
+import TutorialTooltip from "../common/TutorialTooltip";
+import { useTutorial } from "../../context/TutorialContext";
 
 interface Field {
   key: string;
@@ -13,14 +15,43 @@ interface Field {
 interface TableRowProps {
   record: Record;
   fields: Field[];
+  index: number;
 }
 
-export default function TableRow({ record, fields }: TableRowProps) {
+export default function TableRow({ record, fields, index }: TableRowProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const triggerButtonRef = useRef<HTMLButtonElement>(null);
 
+  // Tutorial context
+  const { currentStep, markStepComplete, isFirstVisit } = useTutorial();
+
+  // Only show the tutorial on the first row with errors
+  const [shouldShowTutorial, setShouldShowTutorial] = useState(false);
+
+  const hasErrors = getErrorCount(record) > 0;
+  const isFirstRowWithErrors = index === 0 && hasErrors;
+
+  useEffect(() => {
+    // Check if this row has errors and if we're on the error-view tutorial step
+    if (isFirstRowWithErrors && currentStep === "error-view" && isFirstVisit) {
+      // Use a timeout to ensure the DOM is fully rendered
+      const timeoutId = setTimeout(() => {
+        setShouldShowTutorial(true);
+      }, 500);
+
+      return () => clearTimeout(timeoutId);
+    } else {
+      setShouldShowTutorial(false);
+    }
+  }, [isFirstRowWithErrors, currentStep, isFirstVisit]);
+
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+
+  const handleTutorialComplete = () => {
+    markStepComplete("error-view");
+    setShouldShowTutorial(false);
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status.toLowerCase()) {
@@ -67,20 +98,43 @@ export default function TableRow({ record, fields }: TableRowProps) {
           />
         ))}
         <td className="px-6 py-4 text-right text-sm font-medium">
-          <Button
-            ref={triggerButtonRef}
-            onClick={openModal}
-            variant="link"
-            size="sm"
-            aria-label={`View errors for ${record.name}`}
-          >
-            View Errors
-            {getErrorCount(record) > 0 && (
-              <span className="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-200 text-indigo-800 dark:bg-dark-accent-primary/30 dark:text-dark-accent-secondary theme-transition">
-                {getErrorCount(record)}
-              </span>
-            )}
-          </Button>
+          <div className="relative inline-block">
+            <Button
+              ref={triggerButtonRef}
+              onClick={openModal}
+              variant="link"
+              size="sm"
+              aria-label={`View errors for ${record.name}`}
+            >
+              View Errors
+              {hasErrors && (
+                <span className="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-200 text-indigo-800 dark:bg-dark-accent-primary/30 dark:text-dark-accent-secondary theme-transition">
+                  {getErrorCount(record)}
+                </span>
+              )}
+            </Button>
+
+            {/* Error view tutorial tooltip */}
+            <TutorialTooltip
+              targetRef={triggerButtonRef}
+              content={
+                <p>
+                  Click here to view detailed <strong>error information</strong>{" "}
+                  for this record.
+                  {hasErrors && (
+                    <span className="block mt-1 text-sm opacity-90">
+                      This record has {getErrorCount(record)}{" "}
+                      {getErrorCount(record) === 1 ? "error" : "errors"}.
+                    </span>
+                  )}
+                </p>
+              }
+              isOpen={shouldShowTutorial}
+              onClose={handleTutorialComplete}
+              position="left"
+              id="error-view-tutorial"
+            />
+          </div>
         </td>
       </tr>
 
