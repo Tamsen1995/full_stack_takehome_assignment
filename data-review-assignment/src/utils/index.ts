@@ -16,15 +16,27 @@ export const getError = (record: Record, fieldName: string): Error | null => {
 // Get the appropriate CSS class based on error severity
 export const getErrorClass = (record: Record, fieldName: string): string => {
   const error = getError(record, fieldName);
-  if (!error) return "bg-white"; // No error
+  if (!error) return ""; // No error
 
   switch (error.severity) {
     case "critical":
-      return "bg-red-100";
+      return "bg-red-100 text-red-800";
     case "warning":
-      return "bg-yellow-100";
+      return "bg-yellow-100 text-yellow-800";
     default:
-      return "bg-white";
+      return "";
+  }
+};
+
+// Get a user-friendly label for error severity
+export const getSeverityLabel = (severity: ErrorSeverity): string => {
+  switch (severity) {
+    case "critical":
+      return "Critical";
+    case "warning":
+      return "Warning";
+    default:
+      return severity;
   }
 };
 

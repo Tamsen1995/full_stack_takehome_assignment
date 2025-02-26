@@ -1,37 +1,31 @@
 import { Record } from "../../types";
+import TableHeader from "./TableHeader";
+import TableRow from "./TableRow";
 
 interface DataTableProps {
   records: Record[];
 }
 
 export default function DataTable({ records }: DataTableProps) {
+  // Table fields definition - centralized for consistency
+  const tableFields = [
+    { key: "id", label: "ID" },
+    { key: "name", label: "Name" },
+    { key: "email", label: "Email" },
+    { key: "street", label: "Street" },
+    { key: "city", label: "City" },
+    { key: "zipcode", label: "Zipcode" },
+    { key: "phone", label: "Phone" },
+    { key: "status", label: "Status" },
+  ];
+
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full bg-white border border-gray-200">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="px-4 py-2 text-left">ID</th>
-            <th className="px-4 py-2 text-left">Name</th>
-            <th className="px-4 py-2 text-left">Email</th>
-            <th className="px-4 py-2 text-left">Street</th>
-            <th className="px-4 py-2 text-left">City</th>
-            <th className="px-4 py-2 text-left">Zipcode</th>
-            <th className="px-4 py-2 text-left">Phone</th>
-            <th className="px-4 py-2 text-left">Status</th>
-          </tr>
-        </thead>
-        <tbody>
+    <div className="overflow-x-auto rounded-lg shadow">
+      <table className="min-w-full divide-y divide-gray-200">
+        <TableHeader fields={tableFields} />
+        <tbody className="bg-white divide-y divide-gray-200">
           {records.map((record) => (
-            <tr key={record.id} className="border-t border-gray-200">
-              <td className="px-4 py-2">{record.id}</td>
-              <td className="px-4 py-2">{record.name}</td>
-              <td className="px-4 py-2">{record.email}</td>
-              <td className="px-4 py-2">{record.street}</td>
-              <td className="px-4 py-2">{record.city}</td>
-              <td className="px-4 py-2">{record.zipcode}</td>
-              <td className="px-4 py-2">{record.phone}</td>
-              <td className="px-4 py-2">{record.status}</td>
-            </tr>
+            <TableRow key={record.id} record={record} fields={tableFields} />
           ))}
         </tbody>
       </table>
