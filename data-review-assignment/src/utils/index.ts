@@ -45,8 +45,57 @@ export const getErrorCount = (record: Record): number => {
   return Object.keys(record.errors).length;
 };
 
-// Convert records to CSV format (stub for now)
+/**
+ * Converts an array of records to CSV format
+ * Handles special characters and maintains consistent column order
+ */
 export const convertToCSV = (records: Record[]): string => {
-  // This will be implemented in Task 7
-  return "";
+  if (!records.length) return "";
+
+  // Define headers based on our table structure
+  const headers = [
+    "ID",
+    "Name",
+    "Email",
+    "Street",
+    "City",
+    "Zipcode",
+    "Phone",
+    "Status",
+  ];
+
+  // Escape function to handle special characters
+  const escapeCSV = (value: any): string => {
+    if (value === null || value === undefined) return "";
+    const stringValue = String(value);
+    // If value contains comma, newline or quotes, wrap in quotes and escape existing quotes
+    if (
+      stringValue.includes(",") ||
+      stringValue.includes("\n") ||
+      stringValue.includes('"')
+    ) {
+      return `"${stringValue.replace(/"/g, '""')}"`;
+    }
+    return stringValue;
+  };
+
+  // Create CSV header row
+  const csvContent = [headers.join(",")];
+
+  // Add data rows
+  records.forEach((record) => {
+    const row = [
+      escapeCSV(record.id),
+      escapeCSV(record.name),
+      escapeCSV(record.email),
+      escapeCSV(record.street),
+      escapeCSV(record.city),
+      escapeCSV(record.zipcode),
+      escapeCSV(record.phone),
+      escapeCSV(record.status),
+    ];
+    csvContent.push(row.join(","));
+  });
+
+  return csvContent.join("\n");
 };
